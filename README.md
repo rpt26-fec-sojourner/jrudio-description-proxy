@@ -4,10 +4,7 @@
 
 ## Related Projects
 
-  - https://github.com/teamName/repo
-  - https://github.com/teamName/repo
-  - https://github.com/teamName/repo
-  - https://github.com/teamName/repo
+  - https://github.com/rpt26-fec-sojourner/jrudio-description-service
 
 ## Table of Contents
 
