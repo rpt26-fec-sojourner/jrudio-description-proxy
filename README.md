@@ -1,6 +1,6 @@
-# Project Name
+# FEC Proxy
 
-> Project description
+> This project combines each of our organization's services into one and when setup should operate and look similar as Airbnb's listing page.
 
 ## Related Projects
 
