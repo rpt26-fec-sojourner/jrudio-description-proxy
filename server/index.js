@@ -34,12 +34,15 @@ const proxyHosts = {
 };
 
 const proxyRequest = ({ host, port, path }) => {
+  const timeout = 6;
+
   return {
     port,
     path,
     host,
     method: 'GET',
-    headers: {}
+    headers: {},
+    timeout: timeout * 1000
   };
 };
 
@@ -90,6 +93,7 @@ app.get('/chloe-title-service', (req, res) => {
     proxyRes.on('end', data => res.end());
   }).on('error', err => {
     console.log(`failed to proxy request to ${proxyHosts.chloeTitleService}:${err.message}`);
+    res.end();
   });
 
   proxyConn.end();
@@ -127,6 +131,7 @@ app.get('/title/:id', (req, res) => {
     proxyRes.on('end', data => res.end());
   }).on('error', err => {
     console.log(`failed to proxy request to ${proxyHosts.chloeTitleService}:${err.message}`);
+    res.end();
   });
 
   proxyConn.end();
@@ -146,6 +151,7 @@ app.get('/justin-description-service', (req, res) => {
     proxyRes.on('end', data => res.end());
   }).on('error', err => {
     console.log(`failed to proxy request to ${proxyHosts.justinDescriptionService}:${err.message}`);
+    res.end();
   });
 
   proxyConn.end();
@@ -165,6 +171,7 @@ app.get('/carolyn-photo-service', (req, res) => {
     proxyRes.on('end', data => res.end());
   }).on('error', err => {
     console.log(`failed to proxy request to ${proxyHosts.carolynPhotoService}:${err.message}`);
+    res.end();
   });
 
   proxyConn.end();
@@ -193,6 +200,7 @@ app.get('/:id/photos', (req, res) => {
     proxyRes.on('end', data => res.end());
   }).on('error', err => {
     console.log(`failed to proxy request to ${proxyHosts.carolynPhotoService}:${err.message}`);
+    res.end();
   });
 
   proxyConn.end();
