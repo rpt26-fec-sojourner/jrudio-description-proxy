@@ -5,6 +5,15 @@ const path = require('path');
 const app = express();
 const staticFilesPath = path.resolve(__dirname, '../client');
 
+const removeTrailingSlash = (req, res, next) => {
+  if (req.url.slice(-1) === '/') {
+    req.url = req.url.slice(0, -1);
+  }
+
+  next();
+};
+
+
 // TODO: utilize this in proxyRequest
 const proxyHosts = {
   chloeTitleService: {
@@ -16,6 +25,11 @@ const proxyHosts = {
     host: process.env.JUSTIN_DESCRIPTION_HOST || '127.0.0.1',
     path: '/index.js',
     port: process.env.JUSTIN_DESCRIPTION_PORT || 7878
+  },
+  carolynPhotoService: {
+    host: process.env.JUSTIN_DESCRIPTION_HOST || '127.0.0.1',
+    path: '/bundle.js',
+    port: process.env.JUSTIN_DESCRIPTION_PORT || 4000
   }
 };
 
@@ -29,7 +43,37 @@ const proxyRequest = ({ host, port, path }) => {
   };
 };
 
-app.use('/', express.static(staticFilesPath));
+app.get('/', (req, res) => {
+  res.redirect('/rooms/1');
+
+  res.end();
+});
+
+app.get('/rooms/:id', (req, res, next) => {
+  // catch invalid id
+  const id = req.params.id;
+  const notFoundFilePath = path.join(staticFilesPath, 'notFound.html');
+  const indexPath = path.join(staticFilesPath, 'index.html');
+  const validIDRange = 100;
+
+  if (!id) {
+    res.sendFile(notFoundFilePath);
+
+    return;
+  }
+
+  const idToNumber = Number(id);
+  const isInvalidID = typeof idToNumber === NaN || idToNumber <= 0 || id > 100;
+
+  if (isInvalidID) {
+    console.log('invalid id requested');
+
+    res.sendFile(notFoundFilePath);
+    return;
+  }
+
+  res.sendFile(indexPath);
+});
 
 app.get('/chloe-title-service', (req, res) => {
   console.log('fetching chloe\'s bundle.js');
@@ -64,7 +108,7 @@ app.get('/title/:id', (req, res) => {
     port
   } = proxyHosts.chloeTitleService;
 
-  const proxyPath = `/api/${req.url}`;
+  const proxyPath = `/api${req.url}`;
 
   console.log(`proxying request to: ${proxyPath}`);
 
@@ -102,6 +146,53 @@ app.get('/justin-description-service', (req, res) => {
     proxyRes.on('end', data => res.end());
   }).on('error', err => {
     console.log(`failed to proxy request to ${proxyHosts.justinDescriptionService}:${err.message}`);
+  });
+
+  proxyConn.end();
+});
+
+app.get('/carolyn-photo-service', (req, res) => {
+  console.log('fetching Carolyn\'s bundle.js');
+
+  const options = proxyRequest(proxyHosts.carolynPhotoService);
+
+  const proxyConn = http.request(options, (proxyRes) => {
+    res.writeHead(proxyRes.statusCode);
+    proxyRes.setEncoding('utf8');
+
+    proxyRes.on('data', data => res.write(data));
+    proxyRes.on('close', data => res.end());
+    proxyRes.on('end', data => res.end());
+  }).on('error', err => {
+    console.log(`failed to proxy request to ${proxyHosts.carolynPhotoService}:${err.message}`);
+  });
+
+  proxyConn.end();
+});
+
+app.get('/:id/photos', (req, res) => {
+  console.log('fetching Carolyn\'s photo service');
+
+  const {
+    host,
+    port
+  } = proxyHosts.carolynPhotoService;
+
+  const options = proxyRequest({
+    host,
+    port,
+    path: req.url
+  });
+
+  const proxyConn = http.request(options, (proxyRes) => {
+    res.writeHead(proxyRes.statusCode);
+    proxyRes.setEncoding('utf8');
+
+    proxyRes.on('data', data => res.write(data));
+    proxyRes.on('close', data => res.end());
+    proxyRes.on('end', data => res.end());
+  }).on('error', err => {
+    console.log(`failed to proxy request to ${proxyHosts.carolynPhotoService}:${err.message}`);
   });
 
   proxyConn.end();
