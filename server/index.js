@@ -19,7 +19,7 @@ const proxyHosts = {
   chloeTitleService: {
     host: process.env.CHLOE_TITLE_HOST || '127.0.0.1',
     path: '/bundle.js',
-    port: process.env.CHLOE_TITLE_HOST || 3000
+    port: process.env.CHLOE_TITLE_HOST || 5500
   },
   justinDescriptionService: {
     host: process.env.JUSTIN_DESCRIPTION_HOST || '127.0.0.1',
@@ -112,7 +112,8 @@ app.get('/title/:id', (req, res) => {
     port
   } = proxyHosts.chloeTitleService;
 
-  const proxyPath = `/api${req.url}`;
+  // const proxyPath = `/api${req.url}`;
+  const proxyPath = req.url;
 
   console.log(`proxying request to: ${proxyPath}`);
 
