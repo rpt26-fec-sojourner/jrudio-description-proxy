@@ -5,15 +5,6 @@ const path = require('path');
 const app = express();
 const staticFilesPath = path.resolve(__dirname, '../client');
 
-const removeTrailingSlash = (req, res, next) => {
-  if (req.url.slice(-1) === '/') {
-    req.url = req.url.slice(0, -1);
-  }
-
-  next();
-};
-
-
 // TODO: utilize this in proxyRequest
 const proxyHosts = {
   chloeTitleService: {
@@ -177,6 +168,39 @@ app.get('/carolyn-photo-service', (req, res) => {
     proxyRes.on('end', data => res.end());
   }).on('error', err => {
     console.log(`failed to proxy request to ${proxyHosts.carolynPhotoService}:${err.message}`);
+    res.end();
+  });
+
+  proxyConn.end();
+});
+
+app.get('/api/listing/:id', (req, res) => {
+  console.log('proxying to Justin\'s service');
+
+  const {
+    host,
+    port
+  } = proxyHosts.justinDescriptionService;
+
+  const proxyPath = req.url;
+
+  console.log(`proxying request to: ${proxyPath}`);
+
+  const options = proxyRequest({
+    host,
+    port,
+    path: proxyPath
+  });
+
+  const proxyConn = http.request(options, (proxyRes) => {
+    res.writeHead(proxyRes.statusCode);
+    proxyRes.setEncoding('utf8');
+
+    proxyRes.on('data', data => res.write(data));
+    proxyRes.on('close', data => res.end());
+    proxyRes.on('end', data => res.end());
+  }).on('error', err => {
+    console.log(`failed to proxy request to ${proxyHosts.justinDescriptionService}:${err.message}`);
     res.end();
   });
 
