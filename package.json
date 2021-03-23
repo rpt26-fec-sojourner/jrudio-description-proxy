@@ -1,17 +1,21 @@
 {
-  "name": "",
-  "version": "",
-  "description": "",
-  "author": "",
+  "name": "fec-proxy",
+  "version": "v0.0.1",
+  "description": "i am the one who proxies",
+  "author": "jrudio",
   "license": "",
   "engines": {
     "node": ">=6.13.0"
   },
   "scripts": {
+    "start": "node server/index.js",
+    "lint": "npx eslint ."
   },
   "dependencies": {
+    "express": "^4.17.1"
   },
   "devDependencies": {
+    "eslint": "^7.22.0",
     "eslint-config-hackreactor": "git://github.com/reactorcore/eslint-config-hackreactor"
   }
 }
