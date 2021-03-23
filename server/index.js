@@ -29,7 +29,12 @@ const proxyHosts = {
   carolynPhotoService: {
     host: process.env.JUSTIN_DESCRIPTION_HOST || '127.0.0.1',
     path: '/bundle.js',
-    port: process.env.JUSTIN_DESCRIPTION_PORT || 4000
+    port: process.env.JUSTIN_DESCRIPTION_PORT || 3000
+  },
+  melanieReviewService: {
+    host: process.env.JUSTIN_DESCRIPTION_HOST || '127.0.0.1',
+    path: '/bundle.js',
+    port: process.env.JUSTIN_DESCRIPTION_PORT || 1969
   }
 };
 
@@ -206,6 +211,86 @@ app.get('/:id/photos', (req, res) => {
 
   proxyConn.end();
 });
+
+app.get('/melanie-review-service', (req, res) => {
+  console.log('fetching Melanie\'s bundle.js');
+
+  const options = proxyRequest(proxyHosts.melanieReviewService);
+
+  const proxyConn = http.request(options, (proxyRes) => {
+    res.writeHead(proxyRes.statusCode);
+    proxyRes.setEncoding('utf8');
+
+    proxyRes.on('data', data => res.write(data));
+    proxyRes.on('close', data => res.end());
+    proxyRes.on('end', data => res.end());
+  }).on('error', err => {
+    console.log(`failed to proxy request to ${proxyHosts.melanieReviewService}:${err.message}`);
+    res.end();
+  });
+
+  proxyConn.end();
+});
+
+
+app.get('/reviews/:id', (req, res) => {
+  console.log('fetching Melanie\'s review service');
+
+  const {
+    host,
+    port
+  } = proxyHosts.melanieReviewService;
+
+  const options = proxyRequest({
+    host,
+    port,
+    path: req.url
+  });
+
+  const proxyConn = http.request(options, (proxyRes) => {
+    res.writeHead(proxyRes.statusCode);
+    proxyRes.setEncoding('utf8');
+
+    proxyRes.on('data', data => res.write(data));
+    proxyRes.on('close', data => res.end());
+    proxyRes.on('end', data => res.end());
+  }).on('error', err => {
+    console.log(`failed to proxy request to ${proxyHosts.melanieReviewService}:${err.message}`);
+    res.end();
+  });
+
+  proxyConn.end();
+});
+
+app.get('/stars/:id', (req, res) => {
+  console.log('fetching Melanie\'s star service');
+
+  const {
+    host,
+    port
+  } = proxyHosts.melanieReviewService;
+
+  const options = proxyRequest({
+    host,
+    port,
+    path: req.url
+  });
+
+  const proxyConn = http.request(options, (proxyRes) => {
+    res.writeHead(proxyRes.statusCode);
+    proxyRes.setEncoding('utf8');
+
+    proxyRes.on('data', data => res.write(data));
+    proxyRes.on('close', data => res.end());
+    proxyRes.on('end', data => res.end());
+  }).on('error', err => {
+    console.log(`failed to proxy request to ${proxyHosts.melanieReviewService}:${err.message}`);
+    res.end();
+  });
+
+  proxyConn.end();
+});
+
 
 const port = process.env.APP_PORT || 8989;
 

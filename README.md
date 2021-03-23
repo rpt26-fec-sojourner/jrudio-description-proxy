@@ -15,6 +15,6 @@
 > Some usage instructions
 
 Chloe's app port: `5500`
-Carolyn's app port: `4000`
+Carolyn's app port: `3000`
 Justin's app port: `7878`
 Melanies's app port: `1969`
