@@ -1,5 +1,5 @@
 const express = require('express');
-const http = require('http');
+const http = require('https');
 const path = require('path');
 
 const app = express();
@@ -13,13 +13,12 @@ const removeTrailingSlash = (req, res, next) => {
   next();
 };
 
-
 // TODO: utilize this in proxyRequest
 const proxyHosts = {
   chloeTitleService: {
     host: process.env.CHLOE_TITLE_HOST || '127.0.0.1',
     path: '/bundle.js',
-    port: process.env.CHLOE_TITLE_HOST || 5500
+    port: process.env.CHLOE_TITLE_PORT || 5500
   },
   justinDescriptionService: {
     host: process.env.JUSTIN_DESCRIPTION_HOST || '127.0.0.1',
@@ -27,28 +26,33 @@ const proxyHosts = {
     port: process.env.JUSTIN_DESCRIPTION_PORT || 7878
   },
   carolynPhotoService: {
-    host: process.env.JUSTIN_DESCRIPTION_HOST || '127.0.0.1',
+    host: process.env.CAROLYN_PHOTO_HOST || '127.0.0.1',
     path: '/bundle.js',
-    port: process.env.JUSTIN_DESCRIPTION_PORT || 3000
+    port: process.env.CAROLYN_PHOTO_PORT || 3000
   },
   melanieReviewService: {
-    host: process.env.JUSTIN_DESCRIPTION_HOST || '127.0.0.1',
+    host: process.env.MELANIE_REVIEW_HOST || '127.0.0.1',
     path: '/bundle.js',
-    port: process.env.JUSTIN_DESCRIPTION_PORT || 1969
+    port: process.env.MELANIE_REVIEW_PORT || 1969
   }
 };
 
 const proxyRequest = ({ host, port, path }) => {
   const timeout = 6;
 
-  return {
-    port,
+  let options = {
     path,
     host,
     method: 'GET',
     headers: {},
     timeout: timeout * 1000
   };
+
+  if (port !== 'null' && !!port) {
+    options.port = port;
+  }
+
+  return options;
 };
 
 app.get('/', (req, res) => {
@@ -148,7 +152,7 @@ app.get('/justin-description-service', (req, res) => {
 
   const options = proxyRequest(proxyHosts.justinDescriptionService);
 
-  const proxyConn = http.request(options, (proxyRes) => {
+  const proxyConn = http.get(options, (proxyRes) => {
     res.writeHead(proxyRes.statusCode);
     proxyRes.setEncoding('utf8');
 
@@ -156,7 +160,29 @@ app.get('/justin-description-service', (req, res) => {
     proxyRes.on('close', data => res.end());
     proxyRes.on('end', data => res.end());
   }).on('error', err => {
-    console.log(`failed to proxy request to ${proxyHosts.justinDescriptionService}:${err.message}`);
+    console.log(`failed to proxy request to ${proxyHosts.justinDescriptionService}: ${err.message}`);
+    res.end();
+  });
+
+  proxyConn.end();
+});
+
+app.get('/api/listing/:id', (req, res) => {
+  console.log(`proxying api request to justin's api endpoint...`);
+
+  const options = proxyRequest(proxyHosts.justinDescriptionService);
+
+  options.path = req.url;
+
+  const proxyConn = http.get(options, (proxyRes) => {
+    res.writeHead(proxyRes.statusCode);
+    proxyRes.setEncoding('utf8');
+
+    proxyRes.on('data', data => res.write(data));
+    proxyRes.on('close', data => res.end());
+    proxyRes.on('end', data => res.end());
+  }).on('error', err => {
+    console.log(`failed to proxy request to ${proxyHosts.justinDescriptionService.host}: ${err.message}`);
     res.end();
   });
 

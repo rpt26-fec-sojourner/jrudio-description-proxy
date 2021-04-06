@@ -1,0 +1,30 @@
+version: "3.7"
+services:
+  caddy:
+    image: lucaslorentz/caddy-docker-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    labels:
+      caddy.email: justinjrudio@gmail.com
+    networks:
+      - caddy
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /home/ubuntu/caddy:/data
+  fec-proxy:
+    build: .
+    ports:
+      - "8989:8989"
+    networks:
+      - caddy
+    environment:
+      - PRODUCTION=true
+      - JUSTIN_DESCRIPTION_HOST=fec-description.justinrudio.com
+      - JUSTIN_DESCRIPTION_PORT=null
+    labels:
+      caddy: "fec.justinrudio.com"
+      caddy.reverse_proxy: "{{ upstreams 8989 }}"
+networks:
+  caddy:
+    driver: overlay
