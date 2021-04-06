@@ -1,5 +1,6 @@
 const express = require('express');
-const http = require('https');
+const http = require('http');
+const https = require('https');
 const path = require('path');
 
 const app = express();
@@ -243,7 +244,10 @@ app.get('/melanie-review-service', (req, res) => {
 
   const options = proxyRequest(proxyHosts.melanieReviewService);
 
-  const proxyConn = http.request(options, (proxyRes) => {
+  console.log(options)
+  options.protocol = 'http:';
+
+  const proxyConn = http.get(options, (proxyRes) => {
     res.writeHead(proxyRes.statusCode);
     proxyRes.setEncoding('utf8');
 
