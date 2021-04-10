@@ -89,7 +89,7 @@ app.get('/rooms/:id', (req, res, next) => {
 });
 
 app.get('/chloe-title-service', (req, res) => {
-  console.log('fetching chloe\'s bundle.js');
+  console.log('fetching chloe\'s bundle.js...');
 
   // TODO: refactor proxy requests
   const options = proxyRequest(proxyHosts.chloeTitleService);
@@ -102,7 +102,7 @@ app.get('/chloe-title-service', (req, res) => {
     proxyRes.on('close', data => res.end());
     proxyRes.on('end', data => res.end());
   }).on('error', err => {
-    console.log(`failed to proxy request to ${proxyHosts.chloeTitleService}:${err.message}`);
+    console.log(`fetching chloe's service bundle failed: ${err.message}`);
     res.end();
   });
 
@@ -111,7 +111,7 @@ app.get('/chloe-title-service', (req, res) => {
 
 // chloe's service goes through this route
 app.get('/title/:id', (req, res) => {
-  console.log('proxying to chloe\'s service');
+  console.log('proxying to chloe\'s service...');
 
   const { id } = req.params;
 
@@ -141,7 +141,7 @@ app.get('/title/:id', (req, res) => {
     proxyRes.on('close', data => res.end());
     proxyRes.on('end', data => res.end());
   }).on('error', err => {
-    console.log(`failed to proxy request to ${proxyHosts.chloeTitleService}:${err.message}`);
+    console.log(`failed to fetch chloe's title service: ${err.message}`);
     res.end();
   });
 
@@ -149,7 +149,7 @@ app.get('/title/:id', (req, res) => {
 });
 
 app.get('/justin-description-service', (req, res) => {
-  console.log('fetching Justin\'s bundle.js');
+  console.log('fetching Justin\'s bundle.js...');
 
   const options = proxyRequest(proxyHosts.justinDescriptionService);
 
@@ -161,7 +161,7 @@ app.get('/justin-description-service', (req, res) => {
     proxyRes.on('close', data => res.end());
     proxyRes.on('end', data => res.end());
   }).on('error', err => {
-    console.log(`failed to proxy request to ${proxyHosts.justinDescriptionService}: ${err.message}`);
+    console.log(`fetching justin's service bundle failed: ${err.message}`);
     res.end();
   });
 
@@ -169,7 +169,7 @@ app.get('/justin-description-service', (req, res) => {
 });
 
 app.get('/api/listing/:id', (req, res) => {
-  console.log(`proxying api request to justin's api endpoint...`);
+  console.log('proxying api request to justin\'s api endpoint...');
 
   const options = proxyRequest(proxyHosts.justinDescriptionService);
 
@@ -183,7 +183,7 @@ app.get('/api/listing/:id', (req, res) => {
     proxyRes.on('close', data => res.end());
     proxyRes.on('end', data => res.end());
   }).on('error', err => {
-    console.log(`failed to proxy request to ${proxyHosts.justinDescriptionService.host}: ${err.message}`);
+    console.log(`fetching justin's description service failed: ${err.message}`);
     res.end();
   });
 
@@ -191,7 +191,7 @@ app.get('/api/listing/:id', (req, res) => {
 });
 
 app.get('/carolyn-photo-service', (req, res) => {
-  console.log('fetching Carolyn\'s bundle.js');
+  console.log('fetching Carolyn\'s bundle.js...');
 
   const options = proxyRequest(proxyHosts.carolynPhotoService);
 
@@ -203,7 +203,7 @@ app.get('/carolyn-photo-service', (req, res) => {
     proxyRes.on('close', data => res.end());
     proxyRes.on('end', data => res.end());
   }).on('error', err => {
-    console.log(`failed to proxy request to ${proxyHosts.carolynPhotoService}:${err.message}`);
+    console.log(`fetching carolyn's service bundle failed: ${err.message}`);
     res.end();
   });
 
@@ -211,7 +211,7 @@ app.get('/carolyn-photo-service', (req, res) => {
 });
 
 app.get('/:id/photos', (req, res) => {
-  console.log('fetching Carolyn\'s photo service');
+  console.log('fetching Carolyn\'s photo service...');
 
   const {
     host,
@@ -232,7 +232,7 @@ app.get('/:id/photos', (req, res) => {
     proxyRes.on('close', data => res.end());
     proxyRes.on('end', data => res.end());
   }).on('error', err => {
-    console.log(`failed to proxy request to ${proxyHosts.carolynPhotoService}:${err.message}`);
+    console.log(`fetching from carolyn's photo service failed: ${err.message}`);
     res.end();
   });
 
@@ -240,11 +240,10 @@ app.get('/:id/photos', (req, res) => {
 });
 
 app.get('/melanie-review-service', (req, res) => {
-  console.log('fetching Melanie\'s bundle.js');
+  console.log('fetching Melanie\'s bundle.js...');
 
   const options = proxyRequest(proxyHosts.melanieReviewService);
 
-  console.log(options)
   options.protocol = 'http:';
 
   const proxyConn = http.get(options, (proxyRes) => {
@@ -255,7 +254,7 @@ app.get('/melanie-review-service', (req, res) => {
     proxyRes.on('close', data => res.end());
     proxyRes.on('end', data => res.end());
   }).on('error', err => {
-    console.log(`failed to proxy request to ${proxyHosts.melanieReviewService}:${err.message}`);
+    console.log(`fetching from melanie's servic bundle failed: ${err.message}`);
     res.end();
   });
 
@@ -264,7 +263,7 @@ app.get('/melanie-review-service', (req, res) => {
 
 
 app.get('/reviews/:id', (req, res) => {
-  console.log('fetching Melanie\'s review service');
+  console.log('fetching Melanie\'s review service...');
 
   const {
     host,
@@ -285,7 +284,7 @@ app.get('/reviews/:id', (req, res) => {
     proxyRes.on('close', data => res.end());
     proxyRes.on('end', data => res.end());
   }).on('error', err => {
-    console.log(`failed to proxy request to ${proxyHosts.melanieReviewService}:${err.message}`);
+    console.log(`fetching from melanie's review service failed: ${err.message}`);
     res.end();
   });
 
@@ -293,7 +292,7 @@ app.get('/reviews/:id', (req, res) => {
 });
 
 app.get('/stars/:id', (req, res) => {
-  console.log('fetching Melanie\'s star service');
+  console.log('fetching Melanie\'s star service...');
 
   const {
     host,
@@ -314,7 +313,7 @@ app.get('/stars/:id', (req, res) => {
     proxyRes.on('close', data => res.end());
     proxyRes.on('end', data => res.end());
   }).on('error', err => {
-    console.log(`failed to proxy request to ${proxyHosts.melanieReviewService}:${err.message}`);
+    console.log(`fetching from melanie's star service failed: ${err.message}`);
     res.end();
   });
 
