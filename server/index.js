@@ -151,9 +151,28 @@ app.get('/title/:id', (req, res) => {
 app.get('/justin-description-service', (req, res) => {
   console.log('fetching Justin\'s bundle.js...');
 
-  const options = proxyRequest(proxyHosts.justinDescriptionService);
+  const {
+    host,
+    path,
+    port
+  } = proxyHosts.justinDescriptionService;
 
-  const proxyConn = http.get(options, (proxyRes) => {
+  let endpoint = host;
+  let proxyReq = http;
+
+  if (host.indexOf('http:') < 0 && host.indexOf('https:') < 0) {
+    endpoint = `https://${host}`;
+
+    proxyReq = https;
+  }
+
+  if (port !== 'null') {
+    endpoint += `:${port}`;
+  }
+
+  endpoint += path;
+
+  const proxyConn = proxyReq.get(endpoint, (proxyRes) => {
     res.writeHead(proxyRes.statusCode);
     proxyRes.setEncoding('utf8');
 
@@ -171,11 +190,32 @@ app.get('/justin-description-service', (req, res) => {
 app.get('/api/listing/:id', (req, res) => {
   console.log('proxying api request to justin\'s api endpoint...');
 
-  const options = proxyRequest(proxyHosts.justinDescriptionService);
+  // const options = proxyRequest(proxyHosts.justinDescriptionService);
 
-  options.path = req.url;
+  // options.path = req.url;
 
-  const proxyConn = http.get(options, (proxyRes) => {
+  const {
+    host,
+    path,
+    port
+  } = proxyHosts.justinDescriptionService;
+
+  let endpoint = host;
+  let proxyReq = http;
+
+  if (host.indexOf('http:') < 0 && host.indexOf('https:') < 0) {
+    endpoint = `https://${host}`;
+
+    proxyReq = https;
+  }
+
+  if (port !== 'null') {
+    endpoint += `:${port}`;
+  }
+
+  endpoint += req.url;
+
+  const proxyConn = proxyReq.get(endpoint, (proxyRes) => {
     res.writeHead(proxyRes.statusCode);
     proxyRes.setEncoding('utf8');
 
@@ -254,7 +294,7 @@ app.get('/melanie-review-service', (req, res) => {
     proxyRes.on('close', data => res.end());
     proxyRes.on('end', data => res.end());
   }).on('error', err => {
-    console.log(`fetching from melanie's servic bundle failed: ${err.message}`);
+    console.log(`fetching from melanie's service bundle failed: ${err.message}`);
     res.end();
   });
 
