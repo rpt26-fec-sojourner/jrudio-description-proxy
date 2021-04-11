@@ -122,18 +122,19 @@ app.get('/title/:id', (req, res) => {
     port
   } = proxyHosts.chloeTitleService;
 
-  // const proxyPath = `/api${req.url}`;
   const proxyPath = req.url;
 
   console.log(`proxying request to: ${proxyPath}`);
 
-  const options = proxyRequest({
-    host,
-    port,
-    path: proxyPath
-  });
+  let endpoint = `http://${host}`;
 
-  const proxyConn = http.request(options, (proxyRes) => {
+  if (port !== 'null') {
+    endpoint += `:${port}`;
+  }
+
+  endpoint += `${req.url}`;
+
+  const proxyConn = http.get(endpoint, (proxyRes) => {
     res.writeHead(proxyRes.statusCode);
     proxyRes.setEncoding('utf8');
 
@@ -269,12 +270,13 @@ app.get('/:id/photos', (req, res) => {
     port
   } = proxyHosts.carolynPhotoService;
 
-  // const options = proxyRequest({
-  //   host,
-  //   port,
-  //   path: req.url
-  // });
-  let endpoint = `http://${host}:${port}${req.url}`;
+  let endpoint = `http://${host}`;
+
+  if (port !== 'null') {
+    endpoint += `:${port}`;
+  }
+
+  endpoint += `${req.url}`;
 
   const proxyConn = http.get(endpoint, (proxyRes) => {
     res.writeHead(proxyRes.statusCode);
@@ -294,11 +296,21 @@ app.get('/:id/photos', (req, res) => {
 app.get('/melanie-review-service', (req, res) => {
   console.log('fetching Melanie\'s bundle.js...');
 
-  const options = proxyRequest(proxyHosts.melanieReviewService);
+  const {
+    host,
+    port,
+    path
+  } = proxyHosts.melanieReviewService;
 
-  options.protocol = 'http:';
+  let endpoint = `http://${host}`;
 
-  const proxyConn = http.get(options, (proxyRes) => {
+  if (port !== 'null') {
+    endpoint += `:${port}`;
+  }
+
+  endpoint += `${path}`;
+
+  const proxyConn = http.get(endpoint, (proxyRes) => {
     res.writeHead(proxyRes.statusCode);
     proxyRes.setEncoding('utf8');
 
@@ -322,13 +334,15 @@ app.get('/reviews/:id', (req, res) => {
     port
   } = proxyHosts.melanieReviewService;
 
-  const options = proxyRequest({
-    host,
-    port,
-    path: req.url
-  });
+  let endpoint = `http://${host}`;
 
-  const proxyConn = http.request(options, (proxyRes) => {
+  if (port !== 'null') {
+    endpoint += `:${port}`;
+  }
+
+  endpoint += `${req.url}`;
+
+  const proxyConn = http.get(endpoint, (proxyRes) => {
     res.writeHead(proxyRes.statusCode);
     proxyRes.setEncoding('utf8');
 
@@ -351,13 +365,15 @@ app.get('/stars/:id', (req, res) => {
     port
   } = proxyHosts.melanieReviewService;
 
-  const options = proxyRequest({
-    host,
-    port,
-    path: req.url
-  });
+  let endpoint = `http://${host}`;
 
-  const proxyConn = http.request(options, (proxyRes) => {
+  if (port !== 'null') {
+    endpoint += `:${port}`;
+  }
+
+  endpoint += `${req.url}`;
+
+  const proxyConn = http.get(endpoint, (proxyRes) => {
     res.writeHead(proxyRes.statusCode);
     proxyRes.setEncoding('utf8');
 
