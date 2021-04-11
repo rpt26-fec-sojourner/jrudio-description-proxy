@@ -238,6 +238,8 @@ app.get('/carolyn-photo-service', (req, res) => {
 
   let endpoint = `http://${host}:${port}${path}`;
 
+  console.log(endpoint);
+
   const proxyConn = http.get(endpoint, (proxyRes) => {
     res.writeHead(proxyRes.statusCode);
     proxyRes.setEncoding('utf8');
