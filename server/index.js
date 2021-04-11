@@ -190,10 +190,6 @@ app.get('/justin-description-service', (req, res) => {
 app.get('/api/listing/:id', (req, res) => {
   console.log('proxying api request to justin\'s api endpoint...');
 
-  // const options = proxyRequest(proxyHosts.justinDescriptionService);
-
-  // options.path = req.url;
-
   const {
     host,
     path,
@@ -233,9 +229,16 @@ app.get('/api/listing/:id', (req, res) => {
 app.get('/carolyn-photo-service', (req, res) => {
   console.log('fetching Carolyn\'s bundle.js...');
 
-  const options = proxyRequest(proxyHosts.carolynPhotoService);
+  // const options = proxyRequest(proxyHosts.carolynPhotoService);
+  let {
+    host,
+    port,
+    path
+  } = proxyHosts.carolynPhotoService;
 
-  const proxyConn = http.request(options, (proxyRes) => {
+  let endpoint = `http://${host}:${port}${path}`;
+
+  const proxyConn = http.get(endpoint, (proxyRes) => {
     res.writeHead(proxyRes.statusCode);
     proxyRes.setEncoding('utf8');
 
@@ -258,13 +261,14 @@ app.get('/:id/photos', (req, res) => {
     port
   } = proxyHosts.carolynPhotoService;
 
-  const options = proxyRequest({
-    host,
-    port,
-    path: req.url
-  });
+  // const options = proxyRequest({
+  //   host,
+  //   port,
+  //   path: req.url
+  // });
+  let endpoint = `http://${host}:${port}${req.url}`;
 
-  const proxyConn = http.request(options, (proxyRes) => {
+  const proxyConn = http.get(endpoint, (proxyRes) => {
     res.writeHead(proxyRes.statusCode);
     proxyRes.setEncoding('utf8');
 
