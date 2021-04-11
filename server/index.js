@@ -236,7 +236,13 @@ app.get('/carolyn-photo-service', (req, res) => {
     path
   } = proxyHosts.carolynPhotoService;
 
-  let endpoint = `http://${host}:${port}${path}`;
+  let endpoint = `http://${host}`;
+
+  if (port) {
+    endpoint += `:${port}`;
+  }
+
+  endpoint += `${path}`;
 
   console.log(endpoint);
 
