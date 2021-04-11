@@ -238,7 +238,7 @@ app.get('/carolyn-photo-service', (req, res) => {
 
   let endpoint = `http://${host}`;
 
-  if (port) {
+  if (port !== 'null') {
     endpoint += `:${port}`;
   }
 
